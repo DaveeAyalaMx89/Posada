@@ -1323,10 +1323,9 @@
           var name = guestInput ? guestInput.value.trim() : "";
           setGuestName(name);
           var link = buildInviteUrl(name);
-          var greeting = name ? "¡Hola " + name + "! " : "¡Hola! ";
-          var text = encodeURIComponent(
-            greeting + "Te comparto tu invitación para la Posada Navideña By Davee 2026: " + link
-          );
+          var greeting = name ? "Hola " + name + "," : "Hola,";
+          var message = greeting + "\nTengo una Invitación para ti, ¿Aceptas? 😊🎄✨🎁\n" + link;
+          var text = encodeURIComponent(message);
           var rawPhone = phoneInput ? phoneInput.value.replace(/\D/g, "") : "";
           var waUrl = rawPhone
             ? "https://wa.me/" + rawPhone + "?text=" + text
