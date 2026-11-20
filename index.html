@@ -1023,7 +1023,7 @@
     <div class="modal-card">
       <h3>Personalizar Invitado</h3>
       <p>
-        Escribe el nombre de la persona o familia a la que va dirigida la carta para generar su enlace único de WhatsApp.
+        Escribe el nombre de la persona o familia a la que va dirigida la carta para generar su enlace corto de WhatsApp.
       </p>
 
       <div class="field-group">
@@ -1079,6 +1079,11 @@
       var lastChimeTime = 0;
       var toastTimer = null;
 
+      var emojiSmile = "\uD83D\uDE0A";
+      var emojiTree = "\uD83C\uDF84";
+      var emojiSparkles = "\u2728";
+      var emojiGift = "\uD83C\uDF81";
+
       var urlParams = new URLSearchParams(window.location.search);
       var isAdminMode = urlParams.get("admin") === "1";
 
@@ -1099,19 +1104,15 @@
 
       function getGuestFromUrl() {
         var params = new URLSearchParams(window.location.search);
-        var raw = params.get("para") || params.get("invitado") || params.get("nombre") || "";
+        var raw = params.get("i") || params.get("para") || params.get("invitado") || params.get("nombre") || "";
         return raw.trim();
       }
 
       function buildInviteUrl(name) {
-        var url = new URL(window.location.href);
-        url.searchParams.delete("para");
-        url.searchParams.delete("admin");
-        var base = url.toString();
+        var base = "https://daveeayalamx89.github.io/Posada/";
         var clean = (name || "").trim();
         if (!clean) return base;
-        var sep = base.indexOf("?") !== -1 ? "&" : "?";
-        return base + sep + "para=" + encodeURIComponent(clean);
+        return base + "?i=" + encodeURIComponent(clean);
       }
 
       function updateLinkPreview() {
@@ -1128,10 +1129,11 @@
 
         try {
           var url = new URL(window.location.href);
+          url.searchParams.delete("para");
           if (clean) {
-            url.searchParams.set("para", clean);
+            url.searchParams.set("i", clean);
           } else {
-            url.searchParams.delete("para");
+            url.searchParams.delete("i");
           }
           window.history.replaceState({}, "", url.toString());
         } catch (err) {}
@@ -1307,7 +1309,7 @@
           var link = buildInviteUrl(name);
           if (navigator.clipboard && navigator.clipboard.writeText) {
             navigator.clipboard.writeText(link).then(function () {
-              showToast("Enlace limpio copiado");
+              showToast("Enlace corto copiado");
             }).catch(function () {
               showToast("Nombre aplicado en la invitación");
             });
@@ -1324,7 +1326,8 @@
           setGuestName(name);
           var link = buildInviteUrl(name);
           var greeting = name ? "Hola " + name + "," : "Hola,";
-          var message = greeting + "\nTengo una Invitación para ti, ¿Aceptas? 😊🎄✨🎁\n" + link;
+          var emojis = emojiSmile + emojiTree + emojiSparkles + emojiGift;
+          var message = greeting + "\nTengo una Invitación para ti, ¿Aceptas? " + emojis + "\n" + link;
           var text = encodeURIComponent(message);
           var rawPhone = phoneInput ? phoneInput.value.replace(/\D/g, "") : "";
           var waUrl = rawPhone
