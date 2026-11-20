@@ -777,7 +777,7 @@
       <span id="audioIcon">🔇</span>
       <span id="audioLabel">Villancico: Pausa</span>
     </button>
-    <button id="openCustomBtn" class="pill-btn" type="button">
+    <button id="openCustomBtn" class="pill-btn" type="button" style="display:none;">
       <span>✉️</span>
       <span>Poner nombre de invitado</span>
     </button>
@@ -996,7 +996,7 @@
         <button id="backToEnvelopeBtn" class="secondary-btn" type="button">
           ↩ Volver al sobre
         </button>
-        <button id="customizeFromLetterBtn" class="secondary-btn" type="button">
+        <button id="customizeFromLetterBtn" class="secondary-btn" type="button" style="display:none;">
           ✉️ Cambiar nombre
         </button>
       </div>
@@ -1063,6 +1063,14 @@
       var lastChimeTime = 0;
       var toastTimer = null;
 
+      var urlParams = new URLSearchParams(window.location.search);
+      var isAdminMode = urlParams.get("admin") === "1";
+
+      if (isAdminMode) {
+        if (openCustomBtn) openCustomBtn.style.display = "inline-flex";
+        if (customizeFromLetterBtn) customizeFromLetterBtn.style.display = "inline-block";
+      }
+
       function showToast(msg) {
         if (!toastEl) return;
         toastEl.textContent = msg;
@@ -1082,6 +1090,7 @@
       function buildInviteUrl(name) {
         var url = new URL(window.location.href);
         url.searchParams.delete("para");
+        url.searchParams.delete("admin");
         var base = url.toString();
         var clean = (name || "").trim();
         if (!clean) return base;
@@ -1252,6 +1261,7 @@
       if (audioToggleBtn) audioToggleBtn.addEventListener("click", toggleMusic);
 
       function openCustomModal() {
+        if (!isAdminMode) return;
         var currentName = envelopeGuestName && envelopeGuestName.textContent !== "Mi Invitado Especial"
           ? envelopeGuestName.textContent
           : "";
@@ -1281,7 +1291,7 @@
           var link = buildInviteUrl(name);
           if (navigator.clipboard && navigator.clipboard.writeText) {
             navigator.clipboard.writeText(link).then(function () {
-              showToast("Enlace personalizado copiado");
+              showToast("Enlace limpio copiado");
             }).catch(function () {
               showToast("Nombre aplicado en la invitación");
             });
